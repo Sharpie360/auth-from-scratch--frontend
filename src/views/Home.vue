@@ -11,9 +11,7 @@
       <p>
         Presented by Coding Garden
       </p>
-      <b-btn variant="info">
-        <router-link :to="{ name: 'signup' }">Sign Up</router-link>
-      </b-btn>
+        <router-link class="btn btn-info" :to="{ name: 'signup' }">Sign Up</router-link>
     </b-jumbotron>
   </div>
 </template>
