@@ -1,9 +1,18 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link>
-    </div>
-    <router-view/>
+    <b-navbar toggleable="md" type="dark" variant="info">
+      <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+      <b-navbar-brand href="#">Auth from Scratch</b-navbar-brand>
+      <b-collapse is-nav id="nav_collapse">
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item href="#">
+            <router-link to="/">Sign Up</router-link>
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-collapse>
+    </b-navbar>
+
+    <router-view class="container pt-4"/>
   </div>
 </template>
 
@@ -12,19 +21,11 @@
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+a {
+  color: rgb(238, 238, 238);
+  
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
