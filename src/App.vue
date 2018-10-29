@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="md" type="dark" variant="info">
+    <b-navbar toggleable="md" type="dark" class="rw-navbar">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <b-navbar-brand href="#">Auth from Scratch</b-navbar-brand>
       <b-collapse is-nav id="nav_collapse">
@@ -17,15 +17,39 @@
 </template>
 
 <style>
+
+:root {
+  --rw-font-main: #f7f7f7;
+  --rw-primary: #03A9AC; /* main turquoise */
+  --rw-success: #00D6A4; /* bright green   */
+  --rw-info: #03D8CB;    /* accent teal    */
+  --rw-danger: #006473;  /* dark turquoise */
+  --rw-danger-80: rgba(0, 100, 115, .8);  /* dark turquoise */
+  --rw-background-grey: #212121;
+  --rw-off-black: #0a0a0a;
+}
+
+body {
+  background-color: var(--rw-background-grey);
+  color: var(--rw-font-main)
+}
+hr {
+  background-color: rgb(209, 209, 209);
+  height: 1px;
+}
+.rw-navbar {
+  background-color: var(--rw-off-black);
+}
+.jumbotron {
+  background-color: rgba(0, 100, 115, .8);
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
 }
 
-a {
-  color: rgb(238, 238, 238);
-  
-}
 
 </style>
