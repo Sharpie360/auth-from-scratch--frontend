@@ -40,7 +40,7 @@
           </b-form-input>
         </b-form-group>
 
-        <b-form-group v-show="user.password.length > 2"
+        <b-form-group v-show="user.password.length > 5"
           id="password-verify-group"
           label="Verify Password:"
           label-for="password-verify-input"
