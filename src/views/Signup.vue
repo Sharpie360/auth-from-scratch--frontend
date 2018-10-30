@@ -61,6 +61,14 @@
 </template>
 
 <script>
+import Joi from 'joi'
+
+const schema = Joi.object().keys({
+  username: Joi.string().regex(/(^[a-zA-Z0-9!#$%^&*_-]+$)/).min(3).max(20).required(),
+  password: Joi.string().trim().min(3).required(),
+  passwordVerify: Joi.string().trim().min(3).required(),
+})
+
 export default {
   data () {
     return {
@@ -76,21 +84,41 @@ export default {
       }
     }
   },
+  watch: {
+    user: {
+      handler(){
+        this.alertMessage.visible = false
+        this.alertMessage.value = ''
+      },
+      deep: true
+    }
+  },
   methods: {
     signup() {
       if(this.validateUser()) {
         this.showAlert(false, 'Awesome! Your entries seem to be excellent!')
-      } else {
-        this.showAlert(true, 'Looks like your passwords don\'t match. Please try again...')
-      }
+      } 
     },
     validateUser() {
       if(this.user.password !== this.user.passwordVerify){
+        this.showAlert(true, 'The passwords you\'ve entered don\'t seem to match. Please try again...')
         return false
-      } else {
+      } 
+
+      const result = Joi.validate(this.user, schema)
+      if(result.error === null){
         return true
       }
-    },
+
+      if(result.error.message.includes('username')){
+        this.showAlert(true, 'The username you claimed is not accepted. Requires a-z, A-Z, 0-9, !#$%^&*_-')
+      } else {
+        this.showAlert(true, 'The password you\'ve invoked will not work. Requires a-z, A-Z, 0-9, !#$%^&*_-')
+        return false
+      }
+      }
+  
+    ,
     showAlert(isError, msg) {
       this.alertMessage.visible = true
       this.alertMessage.isError = isError
