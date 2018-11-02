@@ -52,8 +52,11 @@
             placeholder="Verify that you typed the right thing!">
           </b-form-input>
         </b-form-group>
-
-        <b-button type="submit" variant="success">Sign Me Up!</b-button>
+        <div class="signup-group">
+          <b-button type="submit" variant="success"><span v-show="!isRequesting">Sign Me Up!</span>
+          <rotate-loader v-show="isRequesting"></rotate-loader>
+          </b-button>
+        </div>
 
       </b-form>
     </b-card>
@@ -62,11 +65,14 @@
 
 <script>
 import Joi from 'joi'
+import RotateLoader from '../components/RotateLoader'
+
+const SIGNUP_URL = 'http://localhost:7777/auth/signup'
 
 const schema = Joi.object().keys({
   username: Joi.string().regex(/(^[a-zA-Z0-9!#$%^&*_-]+$)/).min(3).max(20).required(),
-  password: Joi.string().trim().min(3).required(),
-  passwordVerify: Joi.string().trim().min(3).required(),
+  password: Joi.string().trim().min(6).required(),
+  passwordVerify: Joi.string().trim().min(6).required(),
 })
 
 export default {
@@ -81,8 +87,12 @@ export default {
         username: '',
         password: '',
         passwordVerify: ''
-      }
+      },
+      isRequesting: false
     }
+  },
+  components: {
+    'rotate-loader': RotateLoader
   },
   watch: {
     user: {
@@ -95,8 +105,42 @@ export default {
   },
   methods: {
     signup() {
+      this.isRequesting = true
       if(this.validateUser()) {
-        this.showAlert(false, 'Awesome! Your entries seem to be excellent!')
+
+        const requestBody = {
+          username: this.user.username,
+          password: this.user.password
+        }
+
+        this.showAlert(false, 'Awesome! Your entries seem to be excellent! Checking avaiability...')
+        fetch(SIGNUP_URL, {
+          method: 'POST',
+          body: JSON.stringify(requestBody),
+          headers: {
+            'content-type': 'application/json'
+          }
+        }).then(response => {
+          if(response.ok){
+            return response.json()
+          } 
+
+          return response.json().then(error => {
+            throw new Error(error.message)
+            this.isRequesting = false
+
+          })
+        }).then(user => {
+          console.log(user)
+          this.isRequesting = false
+          this.$router.push('')
+        }).catch(error => {
+          console.log(error)
+          //this.alertMessage.value = error.message
+          this.showAlert(true, error.message)
+          this.isRequesting = false
+        })
+
       } 
     },
     validateUser() {
@@ -153,5 +197,7 @@ export default {
   border: 1px solid rgb(20, 228, 200);
   color: var(--background-grey);
 }
+
+
 
 </style>
