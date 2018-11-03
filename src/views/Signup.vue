@@ -131,9 +131,11 @@ export default {
 
           })
         }).then(user => {
-          console.log(user)
-          this.isRequesting = false
-          this.$router.push('')
+          const vm = this
+          setTimeout(() => {
+            vm.isRequesting = false
+            vm.$router.push('/login')
+          }, 1000)
         }).catch(error => {
           console.log(error)
           //this.alertMessage.value = error.message
