@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <b-jumbotron class="pb-4">
-      <img src="../assets/rabbit-transparent-1000px.png" class="rw-logo">
+      <!-- <img src="../assets/rabbit-transparent-1000px.png" class="rw-logo"> -->
       <template slot="header">
         Auth From Scratch
       </template>

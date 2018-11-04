@@ -162,9 +162,9 @@ export default {
         this.showAlert(true, 'The password you\'ve invoked will not work. Requires a-z, A-Z, 0-9, !#$%^&*_-')
         return false
       }
-      }
+    },
   
-    ,
+    
     showAlert(isError, msg) {
       this.alertMessage.visible = true
       this.alertMessage.isError = isError
