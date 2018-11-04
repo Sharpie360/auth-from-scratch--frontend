@@ -3,11 +3,17 @@
 
     <b-card>
 			<h1>{{ welcomeMessage }}</h1>
-			<p class="card-text">
-				please login to continue
-			</p>
+			
+			<b-alert 
+        :show="this.alertMessage.visible"
+        :class="{ 
+          'alert-msg-danger': this.alertMessage.isError, 
+          'alert-msg-success': !this.alertMessage.isError 
+        }">
+          {{ alertMessage.value }}
+      </b-alert>
 			<b-form
-				@sumbit.prevent="login">
+				@submit.prevent="login">
 				<b-form-group
 					id="username-group"
 					label="Username:"
@@ -35,9 +41,12 @@
 				</b-form-group>
 
 				<div class="submit-group">
-          <b-button type="submit" variant="success"><span v-show="!isRequesting">Login!</span>
+          <b-button type="submit" variant="success"><span v-show="!isRequesting">Login</span>
           <rotate-loader v-show="isRequesting"></rotate-loader>
           </b-button>
+					<b-button variant="outline-info" class="ml-3">
+						Sign Up
+					</b-button>
         </div>
 			</b-form>
 		</b-card>
@@ -55,16 +64,38 @@ export default {
 				username: '',
 				password: ''
 			},
-			isRequesting: false
+			isRequesting: false,
+			alertMessage: ''
 		}
 	},
 	components: {
 		'rotate-loader': RotateLoader
 	},
+	watch: {
+		// user: {
+		// 	handler(){
+		// 		this.alertMessage.visible = false
+		// 		this.alertMessage.value = ''
+		// 	},
+		// 	deep: true
+		// }
+	},
 	methods: {
 		login() {
-
-		}
+			this.isRequesting = true
+			console.log('test')
+		},
+		showAlert(isError, msg) {
+      this.alertMessage.visible = true
+      this.alertMessage.isError = isError
+      this.alertMessage.value = msg
+      const vm = this
+      setTimeout(() => {
+        vm.alertMessage.visible = false
+        vm.alertMessage.isError = false
+        vm.alertMessage.value = ''
+      }, 3000)
+    }
 	}
 }
 </script>
