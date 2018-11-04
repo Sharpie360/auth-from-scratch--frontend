@@ -54,7 +54,16 @@
 </template>
 
 <script>
+import Joi from 'joi'
+
 import RotateLoader from '../components/RotateLoader'
+
+const schema = Joi.object().keys({
+  username: Joi.string().regex(/(^[a-zA-Z0-9!#$%^&*_-]+$)/).min(3).max(20).required(),
+  password: Joi.string().trim().min(6).required(),
+})
+
+const LOGIN_ROUTE = 'http://localhost/7777/auth/login'
 
 export default {
 	data () {
@@ -65,7 +74,11 @@ export default {
 				password: ''
 			},
 			isRequesting: false,
-			alertMessage: ''
+			alertMessage: {
+        visible: false,
+        isError: false,
+        value: '',
+      }
 		}
 	},
 	components: {
@@ -83,7 +96,22 @@ export default {
 	methods: {
 		login() {
 			this.isRequesting = true
-			console.log('test')
+			if(this.validUser()){
+				fetch('/auth')
+			}
+		},
+		validUser(){
+			const result = Joi.validate(this.user, schema)
+			if (result.error === null){
+				return true
+			}
+			if(result.error.message.includes('username')){
+				this.showAlert(true, 'Username is outside the spec.')
+				
+			} else {
+				this.showAlert(true, 'Password is outside the spec.')
+			}
+			this.isRequesting = false
 		},
 		showAlert(isError, msg) {
       this.alertMessage.visible = true
