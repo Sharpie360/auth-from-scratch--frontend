@@ -2,12 +2,20 @@
   <div id="app">
     <b-navbar toggleable="md" type="dark" class="rw-navbar">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-      <b-navbar-brand href="#">Auth from Scratch</b-navbar-brand>
+      <b-navbar-brand>
+        <router-link id="nav-brand" to="/">Auth From Scratch</router-link>
+      </b-navbar-brand>
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav class="ml-auto">
-          <b-nav-item href="#">
-            <router-link to="/">Sign Up</router-link>
+
+          <b-nav-item>
+            <router-link id="nav-signup" to="/signup">Sign Up</router-link>
           </b-nav-item>
+
+          <b-nav-item>
+            <router-link to="/login">Login</router-link>
+          </b-nav-item>
+          
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -39,6 +47,12 @@ hr {
 }
 .rw-navbar {
   background-color: var(--rw-off-black);
+}
+#nav-brand {
+  color: var(--rw-font-main);
+}
+#nav-signup {
+  color: var(--rw-success)
 }
 .jumbotron {
   background-color: rgba(0, 100, 115, .8);
