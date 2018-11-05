@@ -126,15 +126,14 @@ export default {
           } 
 
           return response.json().then(error => {
-            throw new Error(error.message)
             this.isRequesting = false
-
+            throw new Error(error.message)
           })
-        }).then(user => {
-          const vm = this
+          
+        }).then(result => {
           setTimeout(() => {
-            vm.isRequesting = false
-            vm.$router.push('/login')
+            this.isRequesting = false
+            this.$router.push('/login')
           }, 1000)
         }).catch(error => {
           console.log(error)
@@ -147,6 +146,7 @@ export default {
     },
     validateUser() {
       if(this.user.password !== this.user.passwordVerify){
+        this.isRequesting = false
         this.showAlert(true, 'The passwords you\'ve entered don\'t seem to match. Please try again...')
         return false
       } 
@@ -157,8 +157,10 @@ export default {
       }
 
       if(result.error.message.includes('username')){
+        this.isRequesting = false
         this.showAlert(true, 'The username you claimed is not accepted. Requires a-z, A-Z, 0-9, !#$%^&*_-')
       } else {
+        this.isRequesting = false
         this.showAlert(true, 'The password you\'ve invoked will not work. Requires a-z, A-Z, 0-9, !#$%^&*_-')
         return false
       }
