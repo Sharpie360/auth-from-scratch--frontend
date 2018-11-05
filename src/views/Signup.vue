@@ -9,7 +9,7 @@
           'alert-msg-success': !this.alertMessage.isError 
         }">
           {{ alertMessage.value }}
-        </b-alert>
+      </b-alert>
       <b-form @submit.prevent="signup">
         <b-form-group 
           id="username-group"
