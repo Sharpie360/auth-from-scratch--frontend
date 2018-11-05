@@ -41,12 +41,17 @@
 				</b-form-group>
 
 				<div class="submit-group">
-          <b-button type="submit" variant="success"><span v-show="!isRequesting">Login</span>
+
+          <b-button type="submit" variant="primary"><span v-show="!isRequesting">Login</span>
           <rotate-loader v-show="isRequesting"></rotate-loader>
           </b-button>
-					<b-button variant="outline-info" class="ml-3">
-						Sign Up
-					</b-button>
+
+					<router-link to="/signup">
+						<b-button variant="outline-success" class="ml-3">
+							Sign Up
+						</b-button>
+					</router-link>
+
         </div>
 			</b-form>
 		</b-card>
@@ -63,7 +68,7 @@ const schema = Joi.object().keys({
   password: Joi.string().trim().min(6).required(),
 })
 
-const LOGIN_ROUTE = 'http://localhost/7777/auth/login'
+const LOGIN_ROUTE = 'http://localhost:7777/auth/login'
 
 export default {
 	data () {
@@ -96,8 +101,37 @@ export default {
 	methods: {
 		login() {
 			this.isRequesting = true
+			const requestBody = {
+				username: this.user.username,
+				password: this.user.password
+			}
 			if(this.validUser()){
-				fetch('/auth')
+				fetch(LOGIN_ROUTE, {
+					method: 'POST',
+					headers: {
+						'content-type': 'application/json'
+					},
+					body: JSON.stringify(requestBody)
+				}).then(response => {
+					if(response.ok){
+						return response.json()
+					}
+					
+					return response.json().then(error => {
+            throw new Error(error.message)
+            this.isRequesting = false
+          })
+        }).then(result => {
+					localStorage.token = result.token
+          setTimeout(() => {
+            this.isRequesting = false
+            this.$router.push('/dashboard')
+          }, 1000)
+        }).catch(error => {
+          console.log(error)
+          this.showAlert(true, error.message)
+          this.isRequesting = false
+				})
 			}
 		},
 		validUser(){
