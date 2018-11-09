@@ -8,13 +8,21 @@
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav class="ml-auto">
 
-          <b-nav-item>
-            <router-link id="nav-signup" to="/signup">Sign Up</router-link>
-          </b-nav-item>
+          <template v-if="!isSignedIn">
+            <b-nav-item>
+              <router-link id="nav-signup" to="/signup">Sign Up</router-link>
+            </b-nav-item>
 
-          <b-nav-item>
-            <router-link to="/login">Login</router-link>
-          </b-nav-item>
+            <b-nav-item>
+              <router-link to="/login">Login</router-link>
+            </b-nav-item>
+          </template>
+
+          <template v-else>
+            <b-nav-item>
+              <router-link to="/dashboard">Dashboard</router-link>
+            </b-nav-item>
+          </template>
           
         </b-navbar-nav>
       </b-collapse>
@@ -23,6 +31,21 @@
     <router-view class="container pt-4"/>
   </div>
 </template>
+
+<script>
+  export default {
+    methods: {
+      isSignedIn(){
+        if(localStorage.token){
+          return true
+        } else {
+          return false
+        }
+
+      }
+    }
+  }
+</script>
 
 <style>
 
