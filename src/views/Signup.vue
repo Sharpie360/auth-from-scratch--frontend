@@ -129,11 +129,12 @@ export default {
             this.isRequesting = false
             throw new Error(error.message)
           })
-          
+          // successful signup
         }).then(result => {
+          localStorage.token = result.token
           setTimeout(() => {
             this.isRequesting = false
-            this.$router.push('/login')
+            this.$router.push('/dashboard')
           }, 1000)
         }).catch(error => {
           console.log(error)
