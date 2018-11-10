@@ -64,127 +64,149 @@
 </template>
 
 <script>
-import Joi from 'joi'
-import RotateLoader from '../components/RotateLoader'
+import Joi from "joi";
+import RotateLoader from "../components/RotateLoader";
 
-const SIGNUP_URL = 'http://localhost:7777/auth/signup'
+const SIGNUP_URL_LOCALHOST = "http://localhost:7777/auth/signup";
+const SIGNUP_URL_NETWORK = "http://192.168.5.135:7777/auth/signup";
 
 const schema = Joi.object().keys({
-  username: Joi.string().regex(/(^[a-zA-Z0-9!#$%^&*_-]+$)/).min(3).max(20).required(),
-  password: Joi.string().trim().min(6).required(),
-  passwordVerify: Joi.string().trim().min(6).required(),
-})
+  username: Joi.string()
+    .regex(/(^[a-zA-Z0-9!#$%^&*_-]+$)/)
+    .min(3)
+    .max(20)
+    .required(),
+  password: Joi.string()
+    .trim()
+    .min(6)
+    .required(),
+  passwordVerify: Joi.string()
+    .trim()
+    .min(6)
+    .required()
+});
 
 export default {
-  data () {
+  data() {
     return {
       alertMessage: {
         visible: false,
         isError: false,
-        value: '',
+        value: ""
       },
       user: {
-        username: '',
-        password: '',
-        passwordVerify: ''
+        username: "",
+        password: "",
+        passwordVerify: ""
       },
       isRequesting: false
-    }
+    };
   },
   components: {
-    'rotate-loader': RotateLoader
+    "rotate-loader": RotateLoader
   },
   watch: {
     user: {
-      handler(){
-        this.alertMessage.visible = false
-        this.alertMessage.value = ''
+      handler() {
+        this.alertMessage.visible = false;
+        this.alertMessage.value = "";
       },
       deep: true
     }
   },
   methods: {
     signup() {
-      this.isRequesting = true
-      if(this.validateUser()) {
-
+      this.isRequesting = true;
+      if (this.validateUser()) {
         const requestBody = {
           username: this.user.username,
           password: this.user.password
-        }
+        };
 
-        this.showAlert(false, 'Awesome! Your entries seem to be excellent! Checking avaiability...')
-        fetch(SIGNUP_URL, {
-          method: 'POST',
+        this.showAlert(
+          false,
+          "Awesome! Your entries seem to be excellent! Checking avaiability..."
+        );
+        fetch(SIGNUP_URL_NETWORK, {
+          method: "POST",
           body: JSON.stringify(requestBody),
           headers: {
-            'content-type': 'application/json'
+            "content-type": "application/json"
           }
-        }).then(response => {
-          if(response.ok){
-            return response.json()
-          } 
-
-          return response.json().then(error => {
-            this.isRequesting = false
-            throw new Error(error.message)
-          })
-          // successful signup
-        }).then(result => {
-          localStorage.token = result.token
-          setTimeout(() => {
-            this.isRequesting = false
-            this.$router.push('/dashboard')
-          }, 1000)
-        }).catch(error => {
-          console.log(error)
-          //this.alertMessage.value = error.message
-          this.showAlert(true, error.message)
-          this.isRequesting = false
         })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
 
-      } 
+            return response.json().then(error => {
+              this.isRequesting = false;
+              throw new Error(error.message);
+            });
+            // successful signup
+          })
+          .then(result => {
+            localStorage.token = result.token;
+            setTimeout(() => {
+              this.isRequesting = false;
+              this.$router.push("/dashboard");
+            }, 1000);
+          })
+          .catch(error => {
+            console.log(error);
+            //this.alertMessage.value = error.message
+            this.showAlert(true, error.message);
+            this.isRequesting = false;
+          });
+      }
     },
     validateUser() {
-      if(this.user.password !== this.user.passwordVerify){
-        this.isRequesting = false
-        this.showAlert(true, 'The passwords you\'ve entered don\'t seem to match. Please try again...')
-        return false
-      } 
-
-      const result = Joi.validate(this.user, schema)
-      if(result.error === null){
-        return true
+      if (this.user.password !== this.user.passwordVerify) {
+        this.isRequesting = false;
+        this.showAlert(
+          true,
+          "The passwords you've entered don't seem to match. Please try again..."
+        );
+        return false;
       }
 
-      if(result.error.message.includes('username')){
-        this.isRequesting = false
-        this.showAlert(true, 'The username you claimed is not accepted. Requires a-z, A-Z, 0-9, !#$%^&*_-')
+      const result = Joi.validate(this.user, schema);
+      if (result.error === null) {
+        return true;
+      }
+
+      if (result.error.message.includes("username")) {
+        this.isRequesting = false;
+        this.showAlert(
+          true,
+          "The username you claimed is not accepted. Requires a-z, A-Z, 0-9, !#$%^&*_-"
+        );
       } else {
-        this.isRequesting = false
-        this.showAlert(true, 'The password you\'ve invoked will not work. Requires a-z, A-Z, 0-9, !#$%^&*_-')
-        return false
+        this.isRequesting = false;
+        this.showAlert(
+          true,
+          "The password you've invoked will not work. Requires a-z, A-Z, 0-9, !#$%^&*_-"
+        );
+        return false;
       }
     },
-  
-    
+
     showAlert(isError, msg) {
-      this.alertMessage.visible = true
-      this.alertMessage.isError = isError
-      this.alertMessage.value = msg
-      const vm = this
+      this.alertMessage.visible = true;
+      this.alertMessage.isError = isError;
+      this.alertMessage.value = msg;
+      const vm = this;
       setTimeout(() => {
-        vm.alertMessage.visible = false
-        vm.alertMessage.isError = false
-        vm.alertMessage.value = ''
-      }, 3000)
+        vm.alertMessage.visible = false;
+        vm.alertMessage.isError = false;
+        vm.alertMessage.value = "";
+      }, 3000);
     }
   }
-}
+};
 </script>
 
 <style>
-
 .card {
   background-color: var(--rw-danger-80);
 }
@@ -202,7 +224,4 @@ export default {
   border: 1px solid rgb(20, 228, 200);
   color: var(--background-grey);
 }
-
-
-
 </style>
