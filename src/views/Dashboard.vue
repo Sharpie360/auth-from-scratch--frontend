@@ -2,7 +2,25 @@
   <div>
     <h1 class="display-1">Dashboard</h1>
     <h3>{{ user.username }}</h3>
-    <h6>it werks!</h6>
+
+    <b-form>
+
+      <b-form-group
+        id="notes--title-group"
+        label="Title"
+        label-for="notes--title-input"
+        description="Enter a title for your note">
+        <b-form-input
+          id="notes--title-input"
+          type="text"
+          v-model="newNote.title"
+          placeholder="New Note Title"
+          >
+        </b-form-input>
+      </b-form-group>
+
+    </b-form>
+
     <hr>
     <b-button variant="danger" @click="logout">Logout</b-button>
   </div>
@@ -17,6 +35,12 @@ export default {
     return {
       user: {
         
+      },
+      notes: [],
+      newNote: {
+        title: '',
+        date: '',
+        body: '',
       }
     }
   },
