@@ -8,16 +8,25 @@
       <b-form-group
         id="notes--title-group"
         label="Title"
-        label-for="notes--title-input"
-        description="Enter a title for your note">
+        label-for="notes--title-input">
         <b-form-input
           id="notes--title-input"
           type="text"
           v-model="newNote.title"
+          aria-describedby="titleHelp"
           placeholder="New Note Title"
           >
         </b-form-input>
+        <small id="titleHelp" class="text-muted">Please enter the title of your note</small>
       </b-form-group>
+
+      <b-form-textarea
+        id="notes--body-input"
+        v-model="newNote.body"
+        placeholder="the body of the note"
+        :rows="3"
+        :max-rows="8">
+      </b-form-textarea>
 
     </b-form>
 
@@ -44,7 +53,6 @@ export default {
       }
     }
   },
-
   mounted() {
     fetch(API_URL, {
       headers: {
