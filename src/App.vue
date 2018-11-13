@@ -8,22 +8,18 @@
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav class="ml-auto">
 
-          <template v-if="!isSignedIn">
-            <b-nav-item>
-              <router-link id="nav-signup" to="/signup">Sign Up</router-link>
-            </b-nav-item>
+          <b-nav-item v-show="!checkIfLoggedIn">
+            <router-link id="nav-signup" to="/signup">Sign Up</router-link>
+          </b-nav-item>
 
-            <b-nav-item>
-              <router-link to="/login">Login</router-link>
-            </b-nav-item>
-          </template>
+          <b-nav-item v-show="!checkIfLoggedIn">
+            <router-link to="/login">Login</router-link>
+          </b-nav-item>
 
-          <template v-else>
-            <b-nav-item>
-              <router-link to="/dashboard">Dashboard</router-link>
-            </b-nav-item>
-          </template>
-          
+          <b-nav-item v-show="checkIfLoggedIn">
+            <router-link to="/dashboard">Dashboard</router-link>
+          </b-nav-item>
+
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -33,36 +29,40 @@
 </template>
 
 <script>
-  export default {
-    methods: {
-      isSignedIn(){
-        if(localStorage.token){
-          return true
-        } else {
-          return false
-        }
-
+import eventBus from './main.js'
+export default {
+  data() {
+    return {
+    }
+  },
+  methods: {
+    checkIfLoggedIn() {
+      if (localStorage.token) {
+        return true;
+      } else {
+        return false;
       }
     }
-  }
+  },
+
+};
 </script>
 
 <style>
-
 :root {
   --rw-font-main: #f7f7f7;
-  --rw-primary: #03A9AC; /* main turquoise */
-  --rw-success: #00D6A4; /* bright green   */
-  --rw-info: #03D8CB;    /* accent teal    */
-  --rw-danger: #006473;  /* dark turquoise */
-  --rw-danger-80: rgba(0, 100, 115, .8);  /* dark turquoise */
+  --rw-primary: #03a9ac; /* main turquoise */
+  --rw-success: #00d6a4; /* bright green   */
+  --rw-info: #03d8cb; /* accent teal    */
+  --rw-danger: #006473; /* dark turquoise */
+  --rw-danger-80: rgba(0, 100, 115, 0.8); /* dark turquoise */
   --rw-background-grey: #212121;
   --rw-off-black: #0a0a0a;
 }
 
 body {
   background-color: var(--rw-background-grey);
-  color: var(--rw-font-main)
+  color: var(--rw-font-main);
 }
 hr {
   background-color: rgb(209, 209, 209);
@@ -75,18 +75,15 @@ hr {
   color: var(--rw-font-main);
 }
 #nav-signup {
-  color: var(--rw-success)
+  color: var(--rw-success);
 }
 .jumbotron {
-  background-color: rgba(0, 100, 115, .8);
+  background-color: rgba(0, 100, 115, 0.8);
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
 }
-
-
 </style>
