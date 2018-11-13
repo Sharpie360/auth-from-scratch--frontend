@@ -68,7 +68,8 @@ const schema = Joi.object().keys({
   password: Joi.string().trim().min(6).required(),
 })
 
-const LOGIN_ROUTE = 'http://localhost:7777/auth/login'
+const LOGIN_ROUTE_LOCALHOST = 'http://localhost:7777/auth/login'
+const LOGIN_ROUTE_NETWORK = 'http://192.168.5.135:7777/auth/login'
 
 export default {
 	data () {
@@ -89,15 +90,6 @@ export default {
 	components: {
 		'rotate-loader': RotateLoader
 	},
-	watch: {
-		// user: {
-		// 	handler(){
-		// 		this.alertMessage.visible = false
-		// 		this.alertMessage.value = ''
-		// 	},
-		// 	deep: true
-		// }
-	},
 	methods: {
 		login() {
 			this.isRequesting = true
@@ -106,7 +98,7 @@ export default {
 				password: this.user.password
 			}
 			if(this.validUser()){
-				fetch(LOGIN_ROUTE, {
+				fetch(LOGIN_ROUTE_NETWORK, {
 					method: 'POST',
 					headers: {
 						'content-type': 'application/json'
@@ -125,7 +117,7 @@ export default {
 					localStorage.token = result.token
           setTimeout(() => {
             this.isRequesting = false
-            this.$router.push('/dashboard')
+						this.$router.push('/dashboard')
           }, 1000)
         }).catch(error => {
           console.log(error)
