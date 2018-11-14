@@ -1,50 +1,45 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="md" type="dark" class="rw-navbar">
-      <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-      <b-navbar-brand>
-        <router-link id="nav-brand" to="/">Auth From Scratch</router-link>
-      </b-navbar-brand>
-      <b-collapse is-nav id="nav_collapse">
-        <b-navbar-nav class="ml-auto">
-
-          <b-nav-item v-show="!checkIfLoggedIn">
-            <router-link id="nav-signup" to="/signup">Sign Up</router-link>
-          </b-nav-item>
-
-          <b-nav-item v-show="!checkIfLoggedIn">
-            <router-link to="/login">Login</router-link>
-          </b-nav-item>
-
-          <b-nav-item v-show="checkIfLoggedIn">
-            <router-link to="/dashboard">Dashboard</router-link>
-          </b-nav-item>
-
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-
+    <navbar-main :currentUser="currentUser"></navbar-main>
     <router-view class="container pt-4"/>
   </div>
 </template>
 
 <script>
-import eventBus from './main.js'
+import { EventBus } from './event-bus.js'
+import NavBar from './components/NavBar/NavBar'
+
 export default {
   data() {
     return {
+      currentUser: {
+        signedIn: false,
+        username: ''
+      }
     }
+  },
+  components: {
+    'navbar-main': NavBar
   },
   methods: {
     checkIfLoggedIn() {
       if (localStorage.token) {
-        return true;
+        this.currentUser.signedIn = true
       } else {
-        return false;
+        this.currentUser.signedIn = false
       }
     }
   },
-
+  created(){
+    EventBus.$on('isSignedIn', username => {
+      this.currentUser.signedIn = true
+      this.currentUser.username = username
+    })
+    EventBus.$on('isSignedOut', () => {
+      this.currentUser.signedIn = false
+      this.currentUser.username = ''
+    })
+  }
 };
 </script>
 
