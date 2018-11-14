@@ -4,7 +4,14 @@
     <p>Welcome {{ user.username }}! Lets take some notes.</p>
     <hr>
     <h4 @click="showForm = !showForm">New Note</h4>
-
+    <b-alert 
+      :show="this.alertMessage.visible"
+      :class="{ 
+        'alert-msg-danger': this.alertMessage.isError, 
+        'alert-msg-success': !this.alertMessage.isError 
+      }">
+        {{ alertMessage.value }}
+    </b-alert>
     <b-form v-if="showForm" @submit.prevent="addNote()">
       <b-form-group
         id="notes--title-group"
@@ -31,6 +38,7 @@
 
       <b-button 
         type="submit" 
+        class="mt-3"
         variant="success"
       >Add Note</b-button>
     </b-form>
@@ -54,8 +62,12 @@ export default {
       notes: [],
       newNote: {
         title: '',
-        date: '',
         body: '',
+      },
+      alertMessage: {
+        visible: false,
+        isError: false,
+        value: '',
       },
       showForm: false
     }
@@ -76,7 +88,7 @@ export default {
   },
   methods: {
     addNote() {
-      fetch(`${API_URL}/api/v1/notes`, {
+      fetch(`${API_URL}/api/v1/notes/`, {
         method: 'POST',
         body: JSON.stringify(this.newNote),
         headers: {
@@ -85,12 +97,27 @@ export default {
         }
       }).then(res => res.json())
       .then(note => console.log(note))
+      this.showAlert(false, 'Your note has been successfully added.')
+      this.newNote.title = ''
+      this.newNote.body = ''
     },
     logout() {
       localStorage.removeItem('token')
       EventBus.$emit('isSignedOut')
       this.$router.push('/login')
+    },
+    showAlert(isError, msg) {
+      this.alertMessage.visible = true;
+      this.alertMessage.isError = isError;
+      this.alertMessage.value = msg;
+      const vm = this;
+      setTimeout(() => {
+        vm.alertMessage.visible = false;
+        vm.alertMessage.isError = false;
+        vm.alertMessage.value = "";
+      }, 3000);
     }
+
   }
 }
 </script>
