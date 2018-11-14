@@ -59,8 +59,8 @@
 </template>
 
 <script>
+import { EventBus } from '../event-bus.js'
 import Joi from 'joi'
-
 import RotateLoader from '../components/RotateLoader'
 
 const schema = Joi.object().keys({
@@ -72,6 +72,7 @@ const LOGIN_ROUTE_LOCALHOST = 'http://localhost:7777/auth/login'
 const LOGIN_ROUTE_NETWORK = 'http://192.168.5.135:7777/auth/login'
 
 export default {
+	name: 'login',
 	data () {
 		return {
 			welcomeMessage: 'Welcome!',
@@ -116,7 +117,8 @@ export default {
         }).then(result => {
 					localStorage.token = result.token
           setTimeout(() => {
-            this.isRequesting = false
+						this.isRequesting = false
+						EventBus.$emit('isSignedIn', this.user.username)
 						this.$router.push('/dashboard')
           }, 1000)
         }).catch(error => {
