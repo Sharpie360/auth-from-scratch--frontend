@@ -1,10 +1,11 @@
 <template>
   <div>
-    <h1 class="display-1">Dashboard</h1>
-    <h3>{{ user.username }}</h3>
+    <h1 class="display-4">Notes</h1>
+    <p>Welcome {{ user.username }}! Lets take some notes.</p>
+    <hr>
+    <h4 @click="showForm = !showForm">New Note</h4>
 
-    <b-form>
-
+    <b-form v-if="showForm" @submit.prevent="addNote()">
       <b-form-group
         id="notes--title-group"
         label="Title"
@@ -23,11 +24,15 @@
       <b-form-textarea
         id="notes--body-input"
         v-model="newNote.body"
-        placeholder="the body of the note"
+        placeholder="Write out your note here"
         :rows="3"
         :max-rows="8">
       </b-form-textarea>
 
+      <b-button 
+        type="submit" 
+        variant="success"
+      >Add Note</b-button>
     </b-form>
 
     <hr>
@@ -36,6 +41,7 @@
 </template>
 
 <script>
+import { EventBus } from '../event-bus.js'
 
 const API_URL = 'http://localhost:7777'
 
@@ -50,7 +56,8 @@ export default {
         title: '',
         date: '',
         body: '',
-      }
+      },
+      showForm: false
     }
   },
   mounted() {
@@ -68,8 +75,20 @@ export default {
     })
   },
   methods: {
+    addNote() {
+      fetch(`${API_URL}/api/v1/notes`, {
+        method: 'POST',
+        body: JSON.stringify(this.newNote),
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${localStorage.token}`
+        }
+      }).then(res => res.json())
+      .then(note => console.log(note))
+    },
     logout() {
       localStorage.removeItem('token')
+      EventBus.$emit('isSignedOut')
       this.$router.push('/login')
     }
   }
