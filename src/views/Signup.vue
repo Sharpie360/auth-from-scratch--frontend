@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import { EventBus } from '../event-bus.js'
 import Joi from "joi";
 import RotateLoader from "../components/RotateLoader";
 
@@ -149,6 +150,7 @@ export default {
             localStorage.token = result.token;
             setTimeout(() => {
               this.isRequesting = false;
+              EventBus.$emit('isSignedIn', user.username)
               this.$router.push("/dashboard");
             }, 1000);
           })
