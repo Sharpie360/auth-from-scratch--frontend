@@ -115,7 +115,9 @@ export default {
             this.isRequesting = false
           })
         }).then(result => {
+					console.log(result)
 					localStorage.token = result.token
+					localStorage.setItem('afs-userdata', JSON.stringify(result.userData))
           setTimeout(() => {
 						this.isRequesting = false
 						EventBus.$emit('isSignedIn', this.user.username)
