@@ -25,12 +25,17 @@ export default {
     checkIfLoggedIn() {
       if (localStorage.token) {
         this.currentUser.signedIn = true
+        const loadedUser = JSON.parse(localStorage.getItem('afs-userdata'))
+        this.currentUser.username = loadedUser.username
       } else {
         this.currentUser.signedIn = false
       }
     }
   },
   created(){
+    this.checkIfLoggedIn()
+  },
+  mounted(){  
     EventBus.$on('isSignedIn', username => {
       this.currentUser.signedIn = true
       this.currentUser.username = username
@@ -80,5 +85,9 @@ hr {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.pointer {
+  cursor: pointer;
 }
 </style>
