@@ -14,7 +14,9 @@ export default {
     return {
       currentUser: {
         signedIn: false,
-        username: ''
+        _id: '',
+        username: '',
+        numberOfNotes: 0
       }
     }
   },
@@ -32,15 +34,21 @@ export default {
         this.currentUser.signedIn = false
       }
     }
-  },
+  }, 
   created(){
     this.checkIfLoggedIn()
   },
   mounted(){  
+    // set userdata for current user on sign in
     EventBus.$on('isSignedIn', username => {
       this.currentUser.signedIn = true
       this.currentUser.username = username
     })
+    // set number of notes for current user
+    EventBus.$on('loadNoteCount', count => {
+      this.currentUser.numberOfNotes = count
+    })
+    // remove userdata from LS on logout
     EventBus.$on('isSignedOut', () => {
       this.currentUser.signedIn = false
       this.currentUser.username = ''
@@ -91,4 +99,11 @@ hr {
 .pointer {
   cursor: pointer;
 }
+
+.flexbox-space-between {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
 </style>
