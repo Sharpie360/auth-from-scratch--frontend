@@ -17,9 +17,10 @@
             <router-link to="/login">Login</router-link>
           </b-nav-item>
 
-          <b-nav-item v-show="currentUser.signedIn">
-            <router-link to="/dashboard">{{ currentUser.username }}</router-link>
-          </b-nav-item>
+          <navbar-user-control 
+            v-show="currentUser.signedIn"
+            :currentUser="currentUser">
+          </navbar-user-control>
 
         </b-navbar-nav>
       </b-collapse>
@@ -27,11 +28,11 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
+import NavBarUserControl from './NavBarUserControl'
 
-    }
+export default {
+  components: {
+    'navbar-user-control': NavBarUserControl
   },
   props: ['currentUser'],
   methods: {
