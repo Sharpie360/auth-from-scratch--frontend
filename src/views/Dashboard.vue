@@ -68,6 +68,7 @@
     <hr>
 
     <b-button variant="danger" @click="logout">Logout</b-button>
+
   </div>
 </template>
 
@@ -92,7 +93,7 @@ export default {
         isError: false,
         value: '',
       },
-      showForm: false
+      showForm: false,
     }
   },
   created() {
