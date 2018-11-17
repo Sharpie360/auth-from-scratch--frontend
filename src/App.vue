@@ -27,6 +27,7 @@ export default {
         this.currentUser.signedIn = true
         const loadedUser = JSON.parse(localStorage.getItem('afs-userdata'))
         this.currentUser.username = loadedUser.username
+        this.$router.push('/dashboard')
       } else {
         this.currentUser.signedIn = false
       }
