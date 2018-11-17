@@ -59,15 +59,21 @@
         bg-variant="dark" 
         border-variant="success"
         :header="note.title">
-        <p class="card-text note--body">{{ note.body }}</p>
+        <div 
+          class="delete-icon pointer" 
+          @click="deleteNote(note._id)"
+          >X
+        </div>
+        <p 
+          class="card-text note--body"
+          >{{ note.body }}
+        </p>
 
       </b-card>
       
     </div>
 
     <hr>
-
-    <b-button variant="danger" @click="logout">Logout</b-button>
 
   </div>
 </template>
@@ -81,7 +87,8 @@ export default {
   data () {
     return {
       user: {
-        
+        _id: '',
+        username: '',
       },
       notes: [],
       newNote: {
@@ -97,6 +104,9 @@ export default {
     }
   },
   created() {
+    EventBus.$on('triggerLogout', () => {
+      this.logout()
+    })
   },
   mounted() {
     fetch(API_URL, {
@@ -107,6 +117,7 @@ export default {
     .then(result => {
       if (result.user){
         this.user = result.user
+        console.log(this.user)
         this.getNotes()
       } else {
         this.logout()
@@ -122,12 +133,14 @@ export default {
         }
       }).then(res => res.json())
         .then(notes => {
-          this.notes.push(...notes)
+          this.notes = notes
+          
+          EventBus.$emit('loadNoteCount', this.notes.length)
           console.log(this.notes)
         })
     },
     addNote() {
-      fetch(`${API_URL}/api/v1/notes/`, {
+      fetch(`${API_URL}/api/v1/notes`, {
         method: 'POST',
         body: JSON.stringify(this.newNote),
         headers: {
@@ -139,6 +152,22 @@ export default {
       this.showAlert(false, 'Your note has been successfully added.')
       this.newNote.title = ''
       this.newNote.body = ''
+      this.getNotes()
+    },
+    deleteNote(id) {
+      const noteID = JSON.stringify({
+        "_id": id
+      })
+      fetch(`${API_URL}/api/v1/notes/rm/`, {
+        method: 'POST',
+        body: noteID,
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${localStorage.token}`
+        }
+      }).then(res => res.json())
+      .then(result => console.log(result))
+      this.getNotes()
     },
     logout() {
       localStorage.removeItem('token')
@@ -174,6 +203,11 @@ export default {
   background-color: rgba(3, 169, 172, .2) !important;
 }
 
+.delete-icon {
+  position: absolute;
+  top: .75rem;
+  right: 1rem;
+}
 
 
 </style>
