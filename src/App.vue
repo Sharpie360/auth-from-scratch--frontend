@@ -17,11 +17,17 @@ export default {
         _id: '',
         username: '',
         numberOfNotes: 0
+      },
+      currentDevice: {
+        width: 0
       }
     }
   },
   components: {
     'navbar-main': NavBar
+  },
+  computed: {
+    
   },
   methods: {
     checkIfLoggedIn() {
