@@ -26,8 +26,9 @@
           type="text"
           v-model="newNote.title"
           aria-describedby="titleHelp"
+          aria-required="true"
           placeholder="New Note Title"
-          >
+          required>
         </b-form-input>
         <small id="titleHelp" class="text-muted">Please enter the title of your note</small>
       </b-form-group>
@@ -37,7 +38,8 @@
         v-model="newNote.body"
         placeholder="Write out your note here"
         :rows="3"
-        :max-rows="8">
+        :max-rows="8"
+        required>
       </b-form-textarea>
 
       <b-button 
@@ -50,28 +52,7 @@
 
     <hr>
 
-    <div class="grid-wrap mb-3">
-
-      <b-card 
-        v-for="(note, i) in notes"
-        :key="i"
-        class="note--card"
-        bg-variant="dark" 
-        border-variant="success"
-        :header="note.title">
-        <div 
-          class="delete-icon pointer" 
-          @click="deleteNote(note._id)"
-          >X
-        </div>
-        <p 
-          class="card-text note--body"
-          >{{ note.body }}
-        </p>
-
-      </b-card>
-      
-    </div>
+      <dash--noteboard :notes="notes"></dash--noteboard>
 
     <hr>
 
@@ -81,7 +62,9 @@
 <script>
 import { EventBus } from '../event-bus.js'
 
-const API_URL = 'http://localhost:7777'
+import Noteboard from '../components/Dashboard/Noteboard'
+
+const API_URL = 'http://192.168.5.135:7777'
 
 export default {
   data () {
@@ -103,9 +86,18 @@ export default {
       showForm: false,
     }
   },
+  components: {
+    'dash--noteboard': Noteboard
+  },
   created() {
     EventBus.$on('triggerLogout', () => {
       this.logout()
+    })
+    // Listener for DELETE NOTE from 'Note' cmp
+    EventBus.$on('deleteNote_trigger', noteData => {
+      console.log(noteData)
+      this.notes.splice(noteData.notesArrIndex, 1)
+      this.deleteNote(noteData.id)
     })
   },
   mounted() {
@@ -153,6 +145,7 @@ export default {
       this.newNote.title = ''
       this.newNote.body = ''
       this.getNotes()
+      
     },
     deleteNote(id) {
       const noteID = JSON.stringify({
@@ -167,7 +160,6 @@ export default {
         }
       }).then(res => res.json())
       .then(result => console.log(result))
-      this.getNotes()
     },
     logout() {
       localStorage.removeItem('token')
@@ -209,5 +201,12 @@ export default {
   right: 1rem;
 }
 
+@media screen and (max-width: 480px){
+  .grid-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 1.25rem
+  }
+}
 
 </style>
