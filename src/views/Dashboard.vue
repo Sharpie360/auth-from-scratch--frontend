@@ -2,53 +2,60 @@
   <div>
     <h1 class="display-4">Notes</h1>
     <p>Welcome {{ user.username }}! Lets take some notes.</p>
+    <transition name="fade">
+      <b-alert 
+        :show="this.alertMessage.visible"
+        :class="{ 
+          'alert-msg-danger': this.alertMessage.isError, 
+          'alert-msg-success': !this.alertMessage.isError 
+        }">
+          {{ alertMessage.value }}
+      </b-alert>
+    </transition>
     <hr>
     <h4 
       class="pointer"
       @click="showForm = !showForm"
       >New Note
     </h4>
-    <b-alert 
-      :show="this.alertMessage.visible"
-      :class="{ 
-        'alert-msg-danger': this.alertMessage.isError, 
-        'alert-msg-success': !this.alertMessage.isError 
-      }">
-        {{ alertMessage.value }}
-    </b-alert>
-    <b-form v-if="showForm" @submit.prevent="addNote()">
-      <b-form-group
-        id="notes--title-group"
-        label="Title"
-        label-for="notes--title-input">
-        <b-form-input
-          id="notes--title-input"
-          type="text"
-          v-model="newNote.title"
-          aria-describedby="titleHelp"
-          aria-required="true"
-          placeholder="New Note Title"
+    <transition name="fade">
+      <b-form 
+        class="add-note-form"
+        v-show="showForm" 
+        @submit.prevent="addNote()">
+        <b-form-group
+          id="notes--title-group"
+          label="Title"
+          label-for="notes--title-input">
+          <b-form-input
+            id="notes--title-input"
+            type="text"
+            v-model="newNote.title"
+            aria-describedby="titleHelp"
+            aria-required="true"
+            placeholder="New Note Title"
+            required>
+          </b-form-input>
+          <small id="titleHelp" class="text-muted">Please enter the title of your note</small>
+        </b-form-group>
+
+        <b-form-textarea
+          id="notes--body-input"
+          v-model="newNote.body"
+          placeholder="Write out your note here"
+          :rows="3"
+          :max-rows="8"
           required>
-        </b-form-input>
-        <small id="titleHelp" class="text-muted">Please enter the title of your note</small>
-      </b-form-group>
+        </b-form-textarea>
 
-      <b-form-textarea
-        id="notes--body-input"
-        v-model="newNote.body"
-        placeholder="Write out your note here"
-        :rows="3"
-        :max-rows="8"
-        required>
-      </b-form-textarea>
-
-      <b-button 
-        type="submit" 
-        class="mt-3"
-        variant="success"
-        >Add Note
-      </b-button>
-    </b-form>
+        <b-button 
+          type="submit" 
+          class="mt-3"
+          variant="success"
+          >Add Note
+        </b-button>
+      </b-form>
+    </transition>
 
     <hr>
 
@@ -118,7 +125,7 @@ export default {
   },
   methods: {
     getNotes() {
-      fetch(`${API_URL}/api/v1/notes`, {
+      fetch(`api/v1/notes`, {
         method: 'GET',
         headers: {
           authorization: `Bearer ${localStorage.token}`
@@ -132,7 +139,7 @@ export default {
         })
     },
     addNote() {
-      fetch(`${API_URL}/api/v1/notes`, {
+      fetch(`api/v1/notes`, {
         method: 'POST',
         body: JSON.stringify(this.newNote),
         headers: {
@@ -141,17 +148,17 @@ export default {
         }
       }).then(res => res.json())
       .then(note => console.log(note))
+      this.showForm = false
       this.showAlert(false, 'Your note has been successfully added.')
       this.newNote.title = ''
       this.newNote.body = ''
       this.getNotes()
-      
     },
     deleteNote(id) {
       const noteID = JSON.stringify({
         "_id": id
       })
-      fetch(`${API_URL}/api/v1/notes/rm/`, {
+      fetch(`api/v1/notes/rm/`, {
         method: 'POST',
         body: noteID,
         headers: {
@@ -208,5 +215,24 @@ export default {
     grid-gap: 1.25rem
   }
 }
+
+.add-note-form {
+  max-height: 50rem;
+}
+
+.fade-height-enter-active, .fade-height-leave-active {
+  transition: max-height .2s ease-in-out, opacity .2s ease-in-out;
+}
+.fade-height-enter, .fade-height-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s ease-in-out;
+}
+.fade-enter, .fade-leave {
+  opacity: 0;
+}
+
 
 </style>
